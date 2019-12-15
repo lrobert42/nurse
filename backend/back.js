@@ -88,6 +88,20 @@ function checkUserList(socket, credentials){
     })
 }
 
+function updateUserList(userList){
+    console.log("updating user list")
+    console.log(userList)
+    let path = "./users/userList.json"
+    json = JSON.stringify(userList)
+    fs.writeFile(path, json, function(err){
+        if(err){
+            throw(err)
+        }
+    })
+    sendUserList(socket)
+}
+
+
 function sendUserList(socket){
     let path = "./users/userList.json"
     fs.exists(path, function(exists){
@@ -116,6 +130,10 @@ io.sockets.on('connection', function(socket){
 
     socket.on("ask_user_list", function() {
             sendUserList(socket)
+    })
+
+    socket.on("updatedUserList", function(userList){
+            updateUserList(userList)
     })
 
 
