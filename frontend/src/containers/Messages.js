@@ -23,26 +23,19 @@ const flexContainer = {
 
 export default function MessageList(){
 
-const renderMessageList = (message, index) => {
-    return (
-
-        <ListItem key={index} className="message">
-            <ListItemIcon>
-                 <DraftsIcon/>
-             </ListItemIcon>
-            <ListItemText primary={message}/>
-        </ListItem>
-    )
-}
-
     return (
         <MuiThemeProvider theme={theme} className="messageList">
             <Paper>
                 <h1> No new notification </h1>
-
                 <h2> Last messages: </h2>
                 <List style={flexContainer}>
-                    {messages.map((messages, index) => renderMessageList(messages, index))}
+                    {messages.map((messages, index) => (
+                     <ListItem key={index} className="message">
+                        <ListItemIcon>
+                             <DraftsIcon/>
+                         </ListItemIcon>
+                        <ListItemText primary={messages}/>
+                    </ListItem>))}
                 </List>
             </Paper>
         </MuiThemeProvider>

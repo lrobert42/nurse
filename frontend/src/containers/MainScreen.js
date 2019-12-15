@@ -136,7 +136,7 @@ const handleUserMenuClick = (index) =>{
         setName("Account settings")
         break;
     case 3:
-        props.handleLogout("a")
+        props.handleLogout()
         break;
     case 4:
         setPage(4)
