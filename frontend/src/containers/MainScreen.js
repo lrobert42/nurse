@@ -17,6 +17,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import MailIcon from '@material-ui/icons/Mail';
 
 import Planning from './Planning.js'
+import MessageList from './Messages.js'
 
 import {CalendarToday, AccountCircle, PowerSettingsNew, SupervisorAccount} from "@material-ui/icons"
 
@@ -86,7 +87,7 @@ function MainScreenArea(props){
             return (<Planning />);
             break;
         case 1:
-            return (<h1>1</h1>);
+            return (<MessageList />);
             break;
         case 2:
             return (<h1>2</h1>);

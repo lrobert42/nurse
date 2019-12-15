@@ -9,6 +9,7 @@ import {
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import { blue } from "@material-ui/core/colors";
 import { appointments } from "./data";
+
 const theme = createMuiTheme({ palette: { type: "light", primary: blue } });
 
 export default class Planning extends React.PureComponent {
