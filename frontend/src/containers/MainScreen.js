@@ -14,8 +14,9 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
+
+import Planning from './Planning.js'
 
 import {CalendarToday, AccountCircle, PowerSettingsNew, SupervisorAccount} from "@material-ui/icons"
 
@@ -78,7 +79,29 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+function MainScreenArea(props){
 
+    switch(props.page){
+        case 0:
+            return (<Planning />);
+            break;
+        case 1:
+            return (<h1>1</h1>);
+            break;
+        case 2:
+            return (<h1>2</h1>);
+            break;
+        case 3:
+            return (<h1>3</h1>);
+            break;
+        case 4:
+            return (<h1>4</h1>);
+            break;
+        default:
+            return null;
+            break;
+    }
+}
 
 export default class MainScreen extends React.Component{
     constructor (props){
@@ -96,6 +119,10 @@ function PersistentDrawerLeft(props) {
 
   const [open, setOpen] = React.useState(false);
 
+  const [page, setPage] = React.useState(0);
+
+  const [name, setName] = React.useState("Planning")
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -105,10 +132,33 @@ function PersistentDrawerLeft(props) {
   };
 
   const handleUserMenuClick = (index) =>{
+      switch(index){
+        case 0:
+            setPage(0)
+            setName("Planning")
+            break;
+        case 1:
+            setPage(1)
+            setName("Messages")
+            break;
+        case 2:
+            setPage(2)
+            setName("Account settings")
+            break;
+        case 3:
+            props.handleLogout("a")
+            break;
+        case 4:
+            setPage(4)
+            setName("Management")
+            break;
+        default:
+            return null;
+            break;
+        }
+
       console.log(index +" has been clicked")
   }
-
-
 
   const userIconSwitch = (index) => {
       switch(index){
@@ -150,7 +200,7 @@ function PersistentDrawerLeft(props) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            Persistent drawer
+            {name}
           </Typography>
         </Toolbar>
       </AppBar>
@@ -171,7 +221,7 @@ function PersistentDrawerLeft(props) {
         <Divider />
         <List>
           {['Planning', 'Messages', 'Account', "Log out"].map((text, index) => (
-            <ListItem  key={text} onClick = {handleUserMenuClick(index)}>
+            <ListItem button key={text} onClick = {() =>handleUserMenuClick(index)}>
               <ListItemIcon>{userIconSwitch(index)}</ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
@@ -186,13 +236,12 @@ function PersistentDrawerLeft(props) {
             <ListItem key="admin">
                 <ListItemText primary={"Admin section"}/>
             </ListItem>
-
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
+            <ListItem button key={"management"} onClick={() => handleUserMenuClick(4)}>
+                  <ListItemIcon>
+                      <SupervisorAccount />
+                  </ListItemIcon>
+              <ListItemText primary="Manage nurses" />
             </ListItem>
-          ))}
       </List>
   </>) : null
     }
@@ -204,6 +253,10 @@ function PersistentDrawerLeft(props) {
         })}
       >
         <div className={classes.drawerHeader} />
+
+        <div className="mainScreenArea">
+            <MainScreenArea page={page}/>
+        </div>
 
         <Typography paragraph>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt

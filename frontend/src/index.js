@@ -8,7 +8,7 @@ import MainScreen from './containers/MainScreen.js'
 
 function RenderLogin(props){
 
-    return(props.isLoggedIn ? <MainScreen status = {props.status} /> : <Login handleLogin = {props.handleLogin} />)
+    return(props.isLoggedIn ? <MainScreen status = {props.status} handleLogout={props.handleLogout} /> : <Login handleLogin = {props.handleLogin} />)
 }
 
 class App extends React.Component {
