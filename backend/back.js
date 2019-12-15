@@ -21,47 +21,13 @@ function isInArray(array, object){
         for (i = 0; i < array.length; i++){
             if ((array[i].username === object.username && array[i].password == object.password) ||(object.password == null && array[i].username == object.usermame))
             {
-                return array[i].rank
+                return array[i]
             }
         }
         return null
     }
 }
 
-function registerUser(socket, credentials){
-    let path = "./users/userList.json"
-    fs.exists(path, function(exists){
-        if (exists){
-            fs.readFile(path, 'utf-8', function(err, data){
-                if (err){
-                    throw err
-                } else {
-                    var userList = JSON.parse(data)
-                    let removedPassword = credentials
-                    removedPassword.password = null
-                    if (isInArray(userList, removedPassword))
-                    {
-                        console.log(credentials.username +" is already registered")
-                        socket.emit('already_registered', credentials.username)
-                    }
-                    else {
-                        credentials.rank="nurse"
-                        userList.push(credentials)
-                        json = JSON.stringify(userList)
-                        fs.writeFile(path, json, function(err){
-                            if (err)
-                            {   throw err}
-                            else {
-                                console.log("Registration approved. New user: " + credentials.username)
-                                socket.emit('registration_approved', credentials)
-                            }
-                        })
-                    }
-                }
-            })
-        }
-    })
-}
 
 function checkUserList(socket, credentials){
     let path = "./users/userList.json"
@@ -72,11 +38,11 @@ function checkUserList(socket, credentials){
                     throw err
                 } else {
                     var userList = JSON.parse(data)
-                    let rank = isInArray(userList, credentials)
-                    if (userInArray !== null)
+                    let user = isInArray(userList, credentials)
+                    if (user !== null)
                     {
                         console.log(credentials.username +" is connecting")
-                        socket.emit('connection_approved', rank)
+                        socket.emit('connection_approved', user)
                     }
                     else {
                         console.log("Wrong credentials. Connection denied")
@@ -124,9 +90,6 @@ io.sockets.on('connection', function(socket){
         //TODO check if user is already connected
             checkUserList(socket, credentials)
         })
-    socket.on("registration_asked", function(credentials){
-            registerUser(socket, credentials)
-    })
 
     socket.on("ask_user_list", function() {
             sendUserList(socket)

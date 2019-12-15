@@ -26,8 +26,8 @@ class App extends React.Component {
         super(props)
         this.state = {
             apiResponse: "",
-            isLoggedIn:true,
-            status:"admin",
+            isLoggedIn:false,
+            status:"",
             username:""
         }
         this.handleLogin = this.handleLogin.bind(this)

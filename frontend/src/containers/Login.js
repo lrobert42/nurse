@@ -68,28 +68,30 @@ export default function Login(props) {
     <>
         <Header />
         <div className="Login">
-            <form className ="inputFields">
-                <TextField
-                autoFocus
-                error={error}
-                required
-                id="standard-required_username"
-                label = "Username"
-                value={username}
-                onChange={e => setUsername(e.target.value)}/>
+            <form onSubmit={handleSubmit}>
+                <div className ="inputFields" >
+                    <TextField
+                    autoFocus
+                    error={error}
+                    required
+                    id="standard-required_username"
+                    label = "Username"
+                    value={username}
+                    onChange={e => setUsername(e.target.value)}/>
 
-                <TextField
-                error={error}
-                required
-                id="standard-required_password"
-                label = "password"
-                value={password}
-                type="password"
-                onChange={e => setPassword(e.target.value)}/>
+                    <TextField
+                    error={error}
+                    required
+                    id="standard-required_password"
+                    label = "password"
+                    value={password}
+                    type="password"
+                    onChange={e => setPassword(e.target.value)}/>
+                </div>
+                <Button type="submit" variant="contained" color="primary" id ="login_button" disabled={!validateForm()} onClick = {handleSubmit}>
+                Login
+                </Button>
             </form>
-            <Button variant="contained" color="primary" id ="login_button" disabled={!validateForm()} onClick = {handleSubmit}>
-            Login
-            </Button>
 
         </div>
     </>
