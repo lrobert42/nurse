@@ -54,7 +54,7 @@ function checkUserList(socket, credentials){
     })
 }
 
-function updateUserList(userList){
+function updateUserList(socket, userList){
     console.log("updating user list")
     console.log(userList)
     let path = "./users/userList.json"
@@ -96,7 +96,7 @@ io.sockets.on('connection', function(socket){
     })
 
     socket.on("updatedUserList", function(userList){
-            updateUserList(userList)
+            updateUserList(socket, userList)
     })
 
 
