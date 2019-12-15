@@ -121,34 +121,32 @@ export default function MainScreen(props) {
     setOpen(false);
   };
 
-  const handleUserMenuClick = (index) =>{
-      switch(index){
-        case 0:
-            setPage(0)
-            setName("Planning")
-            break;
-        case 1:
-            setPage(1)
-            setName("Messages")
-            break;
-        case 2:
-            setPage(2)
-            setName("Account settings")
-            break;
-        case 3:
-            props.handleLogout("a")
-            break;
-        case 4:
-            setPage(4)
-            setName("Management")
-            break;
-        default:
-            return null;
-            break;
-        }
-
-      console.log(index +" has been clicked")
-  }
+const handleUserMenuClick = (index) =>{
+    switch(index){
+    case 0:
+        setPage(0)
+        setName("Planning")
+        break;
+    case 1:
+        setPage(1)
+        setName("Messages")
+        break;
+    case 2:
+        setPage(2)
+        setName("Account settings")
+        break;
+    case 3:
+        props.handleLogout("a")
+        break;
+    case 4:
+        setPage(4)
+        setName("Management")
+        break;
+    default:
+        return null;
+        break;
+    }
+}
 
   const userIconSwitch = (index) => {
       switch(index){

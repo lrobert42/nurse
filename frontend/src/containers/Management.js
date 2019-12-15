@@ -21,33 +21,14 @@ export default class Management extends React.Component {
   }
 
   componentDidMount(){
-this.props.socket.emit("ask_user_list")
-
+      this.props.socket.emit("ask_user_list")
       this.props.socket.on("user_list", object =>{
-          const sortedArray = object.slice().sort()
-          this.setState({data:sortedArray})
+          this.setState({data:object})
       })
   }
 
-  // shouldComponentUpdate(){
-  //
-  //     this.props.socket.on("user_list", object =>{
-  //         const sortedArray = object.slice().sort()
-  //         if (sortedArray !=this.state.data){
-  //             this.setState({data:sortedArray}, function(){
-  //                 return true
-  //             })
-  //         }
-  //         else {
-  //             return false
-  //         }
-  //     })
-  //     return false
-  // }
 
   render() {
-      console.log(this.state.data)
-      console.log("rendering")
     return (
         <MuiThemeProvider theme={theme} >
             <Paper>
@@ -57,51 +38,45 @@ this.props.socket.emit("ask_user_list")
                     columns={this.state.columns}
                     data={this.state.data}
                     editable={{
-                        isDeletable: rowData => rowData.status !== "admin",
                       onRowAdd: newData =>
-                        new Promise((resolve, reject) => {
+                        new Promise(resolve => {
                           setTimeout(() => {
-                            {
-
-                              var data = this.state.data;
-                              var length = data.length
-                              let defaultPassword = newData
-                              defaultPassword.password = "default"
-                              defaultPassword.tableData = {id:length}
-                              data.push(defaultPassword);
-                              this.props.socket.emit('updatedUserList', data);
-                              this.setState({ data}, function(){
-                                  resolve()
-                              });
-                            }
-                            
-                        }, 1000)
+                            resolve();
+                            this.setState(prevState => {
+                              const data = [...prevState.data];
+                              let refactoredData = newData;
+                              refactoredData.password = "default";
+                              data.push(refactoredData);
+                              this.props.socket.emit("updatedUserList", data)
+                              return { ...prevState, data };
+                            });
+                          }, 600);
                         }),
                       onRowUpdate: (newData, oldData) =>
-                        new Promise((resolve, reject) => {
+                        new Promise(resolve => {
                           setTimeout(() => {
-                            {
-                              const data = this.state.data;
-                              const index = data.indexOf(oldData);
-                              data[index] = newData;
-                               this.props.socket.emit('updatedUserList', data);
-                              this.setState({ data }, () => resolve());
+                            resolve();
+                            if (oldData) {
+                             this.setState(prevState => {
+                                const data = [...prevState.data];
+                                data[data.indexOf(oldData)] = newData;
+                                this.props.socket.emit("updatedUserList", data)
+                                return { ...prevState, data };
+                              });
                             }
-                            resolve()
-                          }, 1000)
+                          }, 600);
                         }),
                       onRowDelete: oldData =>
-                        new Promise((resolve, reject) => {
+                        new Promise(resolve => {
                           setTimeout(() => {
-                            {
-                              let data = this.state.data;
-                              const index = data.indexOf(oldData);
-                              data.splice(index, 1);
-                              this.props.socket.emit('updatedUserList', data)
-                              this.setState({ data }, () => resolve());
-                            }
-                            resolve()
-                          }, 1000)
+                            resolve();
+                            this.setState(prevState => {
+                              const data = [...prevState.data];
+                              data.splice(data.indexOf(oldData), 1);
+                              this.props.socket.emit("updatedUserList", data)
+                              return { ...prevState, data };
+                            });
+                          }, 600);
                         }),
                     }}
                   />
