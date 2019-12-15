@@ -18,6 +18,7 @@ import MailIcon from '@material-ui/icons/Mail';
 
 import Planning from './Planning.js'
 import MessageList from './Messages.js'
+import Management from "./Management.js"
 
 import {CalendarToday, AccountCircle, PowerSettingsNew, SupervisorAccount} from "@material-ui/icons"
 
@@ -90,13 +91,13 @@ function MainScreenArea(props){
             return (<MessageList />);
             break;
         case 2:
-            return (<h1>2</h1>);
+            return (<h1>Account settings</h1>);
             break;
         case 3:
             return (<h1>3</h1>);
             break;
         case 4:
-            return (<h1>4</h1>);
+            return (<Management socket={props.socket}/>);
             break;
         default:
             return null;
@@ -104,18 +105,8 @@ function MainScreenArea(props){
     }
 }
 
-export default class MainScreen extends React.Component{
-    constructor (props){
-        super(props)
-    }
-    render(){
-        return(
-            <PersistentDrawerLeft handleLogout = {this.props.handleLogout} status={this.props.status}/>
-        )
-    }
-}
 
-function PersistentDrawerLeft(props) {
+export default function MainScreen(props) {
   const classes = useStyles();
 
   const [open, setOpen] = React.useState(false);
@@ -256,7 +247,7 @@ function PersistentDrawerLeft(props) {
         <div className={classes.drawerHeader} />
 
         <div className="mainScreenArea">
-            <MainScreenArea page={page}/>
+            <MainScreenArea page={page} socket={props.socket}/>
         </div>
 
         <Typography paragraph>

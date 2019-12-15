@@ -36,23 +36,30 @@ function Header() {
   );
 }
 
-
 export default function Login(props) {
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(false);
 
 
     function validateForm() {
-        return (email.length > 0 && password.length > 0)
+        return (username.length > 0 && password.length > 0)
     }
 
     function handleSubmit(event) {
-        if (validateForm && password.length > 4){
-            props.handleLogin(email);
-        }
-        else {
-            setError(true);
+        if (validateForm){
+            let credentials = {
+                username:username,
+                password:password
+            }
+            props.socket.emit("new_client", credentials)
+            props.socket.on('connection_approved', object =>{
+                props.handleLogin(object);
+            })
+            props.socket.on("connection_denied", () => {
+                setError(true);
+            })
+
         }
         event.preventDefault();
     }
@@ -67,9 +74,9 @@ export default function Login(props) {
                 error={error}
                 required
                 id="standard-required_username"
-                label = "email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}/>
+                label = "Username"
+                value={username}
+                onChange={e => setUsername(e.target.value)}/>
 
                 <TextField
                 error={error}

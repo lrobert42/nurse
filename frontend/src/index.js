@@ -5,10 +5,20 @@ import * as serviceWorker from './serviceWorker';
 import Login from './containers/Login.js'
 import MainScreen from './containers/MainScreen.js'
 
+const io = require('socket.io-client')
+const socket = io.connect('localhost:3001')
 
 function RenderLogin(props){
 
-    return(props.isLoggedIn ? <MainScreen status = {props.status} handleLogout={props.handleLogout} /> : <Login handleLogin = {props.handleLogin} />)
+    return(props.isLoggedIn ?
+        <MainScreen
+             socket={props.socket}
+             handleLogout = {props.handleLogout}
+             status={props.status}/>
+            :
+        <Login
+            handleLogin = {props.handleLogin}
+            socket={props.socket} />)
 }
 
 class App extends React.Component {
@@ -17,43 +27,35 @@ class App extends React.Component {
         this.state = {
             apiResponse: "",
             isLoggedIn:true,
-            status:"admin"
+            status:"admin",
+            username:""
         }
         this.handleLogin = this.handleLogin.bind(this)
         this.handleLogout = this.handleLogout.bind(this)
     }
 
-    handleLogin(rank){
-        this.setState({isLoggedIn:true, status:rank}, function(){
-            console.log("Successfuly logged in with rank: " + rank)
+    handleLogin(object){
+        this.setState({isLoggedIn:true, status:object.rank, username:object.username}, function(){
+            console.log(object.username +" successfuly logged in with rank: " + object.rank)
         });
     }
 
     handleLogout(){
-        console.log("je suis las")
-        this.setState({isLoggedIn:false, status:""}, function(){
+
+        this.setState({isLoggedIn:false, status:"", username:""}, function(){
             console.log("Successfuly logged out");
         });
-    }
-    callAPI(){
-        fetch("http://localhost:9000/testAPI")
-        .then(res => res.text())
-        .then(res => this.setState({apiResponse: res}))
-        .catch(err => console.log(err))
-
-    }
-
-    componentDidMount(){
-        this.callAPI()
     }
 
     render(){
         return(
             <RenderLogin
+                socket={socket}
                 handleLogin={this.handleLogin}
                 handleLogout={this.handleLogout}
                 isLoggedIn={this.state.isLoggedIn}
-                status = {this.state.status}/>
+                status = {this.state.status}
+                username = {this.props.username}/>
         )
     }
 }

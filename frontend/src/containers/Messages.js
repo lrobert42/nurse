@@ -27,7 +27,7 @@ export default function MessageList(){
 const renderMessageList = (message, index) => {
     return (
 
-        <ListItem key={index}>
+        <ListItem key={index} className="message">
             <ListItemIcon>
                  <DraftsIcon/>
              </ListItemIcon>
