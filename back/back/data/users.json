@@ -1,0 +1,27 @@
+[
+	{
+		"username":"admin",
+		"password":"100detours",
+		"usertype":0
+	},
+	{
+		"username":"nurse1",
+		"password":"nurse1",
+		"usertype":1
+	},
+	{
+		"username":"nurse2",
+		"password":"nurse2",
+		"usertype":1
+	},
+	{
+		"username":"nurse3",
+		"password":"nurse3",
+		"usertype":1
+	},
+	{
+		"username":"nurse4",
+		"password":"nurse4",
+		"usertype":1
+	}
+]
