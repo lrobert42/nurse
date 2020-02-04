@@ -18,8 +18,12 @@ import MailIcon from '@material-ui/icons/Mail';
 
 import Planning from './Planning.js'
 import MessageList from './Messages.js'
-import Management from "./Management.js"
 import AccountSettings from "./Account.js"
+import NurseManagement from "./NurseManagement.js"
+import PatientManagement from "./PatientManagement.js"
+import TreatementManagement from "./TreatementManagement.js"
+
+
 
 import {CalendarToday, AccountCircle, PowerSettingsNew, SupervisorAccount} from "@material-ui/icons"
 
@@ -92,7 +96,10 @@ export default function MainScreen(props)
             MESSAGES   : 1,
             ACCOUNT    : 2,
             LOGOUT     : 3,
-            MANAGEMENT : 4
+            NURSEMANAGEMENT : 4,
+            PATIENTMANAGEMENT : 5,
+            TREATEMENTMANAGEMENT : 6,
+
     }
 
     const classes = useStyles();
@@ -122,8 +129,12 @@ export default function MainScreen(props)
                         return (<MessageList />);
                 case Pages.ACCOUNT:
                         return (<AccountSettings/>);
-                case Pages.MANAGEMENT:
-                        return (<Management/>);
+                case Pages.PATIENTMANAGEMENT:
+                        return (<PatientManagement/>);
+                case Pages.TREATEMENTMANAGEMENT:
+                        return (<TreatementManagement/>);
+                case Pages.NURSEMANAGEMENT:
+                        return(<NurseManagement />)
                 default:
                         return null;
         }
@@ -150,9 +161,17 @@ const handleUserMenuClick = (index) => {
                     setName("Log out")
                     props.handleLogout()
                     break;
-            case Pages.MANAGEMENT:
-                    setPage(Pages.MANAGEMENT)
-                    setName("Management")
+            case Pages.NURSEMANAGEMENT:
+                    setPage(Pages.NURSEMANAGEMENT)
+                    setName("Nurse management")
+                    break;
+            case Pages.TREATEMENTMANAGEMENT:
+                    setPage(Pages.TREATEMENTMANAGEMENT)
+                    setName("Treatement management")
+                    break;
+            case Pages.PATIENTMANAGEMENT:
+                    setPage(Pages.PATIENTMANAGEMENT)
+                    setName("Patient management")
                     break;
             default:
                     return null;
@@ -223,7 +242,7 @@ const handleUserMenuClick = (index) => {
                 <Divider />
 
                 <List>
-                
+
                     {['Planning', 'Messages', 'Account', "Log out"].map((text, index) => (
                         <ListItem button key={text} onClick = {() =>handleUserMenuClick(index)}>
                             <ListItemIcon>{userIconSwitch(index)}</ListItemIcon>
@@ -235,21 +254,20 @@ const handleUserMenuClick = (index) => {
 
                 <Divider />
                     {/* If admin, manager bar*/}
-                    {props.status === "admin" || true ? 
+                    {props.status === "admin" || true ?
                         (
                             <>
                             <List>
                                     <ListItem key="admin">
                                             <ListItemText primary={"Admin section"}/>
                                     </ListItem>
-                                    <ListItem button key={"management"} onClick={() => handleUserMenuClick(4)}>
-                                                <ListItemIcon>
-                                                        <SupervisorAccount />
-                                                </ListItemIcon>
-                                        <ListItemText primary="Manage nurses" />
-                                    </ListItem>
+                                    {['Nurse management', 'Patient management', 'Treatement Management'].map((text, index) =>
+                                      <ListItem button key={text} onClick = {() =>handleUserMenuClick(index + 4)}>
+                                          <ListItemIcon><SupervisorAccount/></ListItemIcon>
+                                          <ListItemText primary={text} />
+                                      </ListItem>
+                                    )}
                             </List>
-
                             </>
                         ) : null
                     }

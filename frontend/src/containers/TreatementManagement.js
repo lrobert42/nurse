@@ -8,12 +8,12 @@ import * as ManagementApi from "../api_communication/management_api.js"
 
 const theme = createMuiTheme({ palette: { type: "light", primary: blue } });
 
-export default class Management extends React.Component
+export default class TreatementManagement extends React.Component
 {
     constructor(props)
     {
         super(props);
-    
+
         this.state = {
             columns: [
                     { title: 'Username', field: 'username' },
@@ -44,7 +44,7 @@ export default class Management extends React.Component
 
             // TODO: Add a fetch here
             return { ...prevState, data };
-        });   
+        });
     }
 
     on_row_update(new_data, old_data)
