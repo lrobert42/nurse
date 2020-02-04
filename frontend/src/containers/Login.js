@@ -7,6 +7,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import "./Login.css";
 
+import { fetch_login } from '../api_communication/login_api.js'
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -20,7 +22,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Header() {
+function Header()
+{
   const classes = useStyles();
 
   return (
@@ -36,59 +39,60 @@ function Header() {
   );
 }
 
-export default function Login(props) {
+export default function Login(props)
+{
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(false);
 
 
-    function validateForm() {
+    function validateForm()
+    {
         return (username.length > 0 && password.length > 0)
     }
 
     function handleSubmit(event) {
-        if (validateForm){
+
+        event.preventDefault();
+
+        if (validateForm)
+        {
             let credentials = {
-                username:username,
-                password:password
-            }
-            props.socket.emit("new_client", credentials)
-            props.socket.on('connection_approved', object =>{
-                props.handleLogin(object);
-            })
-            props.socket.on("connection_denied", () => {
-                setError(true);
-            })
+                'username': username,
+                'password': password
+            };
+
+            fetch_login(credentials, props.handleLogin, setError)
 
         }
-        event.preventDefault();
     }
 
     return (
     <>
         <Header />
-        <div className="Login">
-            <form onSubmit={handleSubmit}>
-                <div className ="inputFields" >
+
+        <div className = "Login">
+            <form onSubmit = {handleSubmit}>
+                <div className = "inputFields" >
                     <TextField
                     autoFocus
-                    error={error}
+                    error = {error}
                     required
-                    id="standard-required_username"
+                    id = "standard-required_username"
                     label = "Username"
-                    value={username}
-                    onChange={e => setUsername(e.target.value)}/>
+                    value = {username}
+                    onChange = {e => setUsername(e.target.value)} />
 
                     <TextField
-                    error={error}
+                    error = {error}
                     required
-                    id="standard-required_password"
+                    id = "standard-required_password"
                     label = "password"
-                    value={password}
-                    type="password"
-                    onChange={e => setPassword(e.target.value)}/>
+                    value = {password}
+                    type = "password"
+                    onChange = {e => setPassword(e.target.value)} />
                 </div>
-                <Button type="submit" variant="contained" color="primary" id ="login_button" disabled={!validateForm()} onClick = {handleSubmit}>
+                <Button type = "submit" variant = "contained" color = "primary" id = "login_button" disabled = {!validateForm()} onClick = {handleSubmit}>
                 Login
                 </Button>
             </form>

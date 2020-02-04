@@ -4,84 +4,117 @@ import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import { blue } from "@material-ui/core/colors";
 import MaterialTable from "material-table"
 
+import * as ManagementApi from "../api_communication/management_api.js"
+
 const theme = createMuiTheme({ palette: { type: "light", primary: blue } });
 
-export default class Management extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      columns: [
-        { title: 'Username', field: 'username' },
-        { title: 'Status', field: 'rank', lookup:{'admin':'admin', 'nurse':'nurse'
-        }}
-      ],
-      data: []
+export default class Management extends React.Component
+{
+    constructor(props)
+    {
+        super(props);
+    
+        this.state = {
+            columns: [
+                    { title: 'Username', field: 'username' },
+                    { title: 'Status', field: 'rank', lookup: { 'admin':'admin', 'nurse':'nurse' } },
+                ],
+            data: []
+        }
+
     }
 
-  }
+    componentDidMount()
+    {
+        ManagementApi.get_nurses_list((new_state) => this.setState(new_state), console.error);
+    }
 
-  componentDidMount(){
-      this.props.socket.emit("ask_user_list")
-      this.props.socket.on("user_list", object =>{
-          this.setState({data:object})
-      })
-  }
+    on_row_add(new_data)
+    {
+        this.setState(prevState => {
+            console.log("yyy ==> ewq" )
+            const data = [...prevState.data];
+            let refactoredData = new_data;
+            refactoredData.password = "default";
 
+            data.push(refactoredData);
 
-  render() {
-    return (
-        <MuiThemeProvider theme={theme} >
-            <Paper>
-                <h1> Management section </h1>
-                  <MaterialTable
-                    title="User list"
-                    columns={this.state.columns}
-                    data={this.state.data}
-                    editable={{
-                      onRowAdd: newData =>
-                        new Promise(resolve => {
-                          setTimeout(() => {
-                            resolve();
-                            this.setState(prevState => {
-                              const data = [...prevState.data];
-                              let refactoredData = newData;
-                              refactoredData.password = "default";
-                              data.push(refactoredData);
-                              this.props.socket.emit("updatedUserList", data)
-                              return { ...prevState, data };
-                            });
-                          }, 600);
-                        }),
-                      onRowUpdate: (newData, oldData) =>
-                        new Promise(resolve => {
-                          setTimeout(() => {
-                            resolve();
-                            if (oldData) {
-                             this.setState(prevState => {
-                                const data = [...prevState.data];
-                                data[data.indexOf(oldData)] = newData;
-                                this.props.socket.emit("updatedUserList", data)
-                                return { ...prevState, data };
-                              });
-                            }
-                          }, 600);
-                        }),
-                      onRowDelete: oldData =>
-                        new Promise(resolve => {
-                          setTimeout(() => {
-                            resolve();
-                            this.setState(prevState => {
-                              const data = [...prevState.data];
-                              data.splice(data.indexOf(oldData), 1);
-                              this.props.socket.emit("updatedUserList", data)
-                              return { ...prevState, data };
-                            });
-                          }, 600);
-                        }),
-                    }}
-                  />
-          </Paper>
-      </MuiThemeProvider>
-    )
-  }
+            console.log("yyy ==> ", data )
+            // this.props.socket.emit("updatedUserList", data)
+
+            // TODO: Add a fetch here
+            return { ...prevState, data };
+        });   
+    }
+
+    on_row_update(new_data, old_data)
+    {
+        if (old_data)
+        {
+            this.setState(prevState => {
+                const data = [...prevState.data];
+                data[data.indexOf(old_data)] = new_data;
+
+                // this.props.socket.emit("updatedUserList", data)
+
+                // ManagementApi.edit_nurse()
+                // TODO: Add a fetch here
+                return { ...prevState, data };
+            });
+        }
+    }
+
+    on_row_delete(old_data)
+    {
+        this.setState(prevState => {
+            const data = [...prevState.data];
+            data.splice(data.indexOf(old_data), 1);
+
+            // this.props.socket.emit("updatedUserList", data)
+
+            // ManagementApi.delete_nurse()
+
+            // TODO: Add a fetch here
+            return { ...prevState, data };
+        });
+    }
+
+    render() {
+        return (
+                <MuiThemeProvider theme={theme} >
+                    <Paper>
+                            <h1> Management section </h1>
+
+                                <MaterialTable
+
+                                    title = "User list"
+                                    columns = {this.state.columns}
+                                    data = {this.state.data}
+
+                                    editable = {{
+
+                                        onRowAdd: newData =>
+                                            new Promise(resolve => {
+
+                                                this.on_row_add(newData);
+                                                resolve();
+                                            }),
+
+                                        onRowUpdate: (newData, oldData) =>
+                                            new Promise(resolve => {
+                                                resolve()
+                                                this.on_row_update(newData, oldData)
+                                            }),
+
+                                        onRowDelete: oldData =>
+                                            new Promise(resolve => {
+                                                resolve()
+                                                this.on_row_delete(oldData)
+                                            }),
+                                    }}
+                                />
+                </Paper>
+            </MuiThemeProvider>
+        )
+    }
 }

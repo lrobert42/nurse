@@ -5,57 +5,75 @@ import * as serviceWorker from './serviceWorker';
 import Login from './containers/Login.js'
 import MainScreen from './containers/MainScreen.js'
 
-const io = require('socket.io-client')
-const socket = io.connect('localhost:3001')
-
-function RenderLogin(props){
-
-    return(props.isLoggedIn ?
+function RenderLogin(props)
+{
+    // Login page or MainScreen if logged in
+    return(props.is_logged_in ?
         <MainScreen
-             socket={props.socket}
              handleLogout = {props.handleLogout}
-             status={props.status}/>
+             status={props.status}
+             username={props.username}
+             access_token={props.access_token}
+             />
             :
         <Login
             handleLogin = {props.handleLogin}
-            socket={props.socket} />)
+            />)
 }
 
-class App extends React.Component {
-    constructor(props){
+class App extends React.Component
+{
+    constructor(props)
+    {
         super(props)
         this.state = {
             apiResponse: "",
-            isLoggedIn:false,
-            status:"",
-            username:""
+            is_logged_in: false,
+            status: "",
+            username: "",
+            access_token: "",
+            rid: -1
         }
         this.handleLogin = this.handleLogin.bind(this)
         this.handleLogout = this.handleLogout.bind(this)
     }
 
-    handleLogin(object){
-        this.setState({isLoggedIn:true, status:object.rank, username:object.username}, function(){
-            console.log(object.username +" successfuly logged in with rank: " + object.rank)
+    handleLogin(response, credentials)
+    {
+        this.setState({
+                        is_logged_in : true,
+                        username     : credentials.username, 
+                        status       : response.usertype,
+                        access_token : response.access_token,
+                        // TODO
+                        rid: 1
+
+                    }, function() {
+            console.log(credentials.username + " successfuly logged in with rank: " + response.usertype)
         });
     }
 
-    handleLogout(){
-
-        this.setState({isLoggedIn:false, status:"", username:""}, function(){
+    handleLogout()
+    {
+        this.setState({is_logged_in:false, status:"", username:""}, function() {
             console.log("Successfuly logged out");
         });
     }
 
-    render(){
+    render()
+    {
+
         return(
             <RenderLogin
-                socket={socket}
                 handleLogin={this.handleLogin}
                 handleLogout={this.handleLogout}
-                isLoggedIn={this.state.isLoggedIn}
+                is_logged_in={this.state.is_logged_in}
                 status = {this.state.status}
-                username = {this.props.username}/>
+                username = {this.state.username}
+                // rid={this.state.rid}
+                access_token={this.state.access_token}
+
+                />
         )
     }
 }
