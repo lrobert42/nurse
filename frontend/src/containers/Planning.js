@@ -6,9 +6,16 @@ import {
   WeekView,
   Appointments,
   AppointmentTooltip,
+  DateNavigator,
+  Toolbar as ToolbarScheduler,
+  TodayButton
 
 } from "@devexpress/dx-react-scheduler-material-ui";
-import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import { MuiThemeProvider, createMuiTheme, withStyles } from "@material-ui/core/styles";
+import LocalHospital from '@material-ui/icons/LocalHospital'
+import Grid from '@material-ui/core/Grid';
+import Room from '@material-ui/icons/Room';
+
 import { blue } from "@material-ui/core/colors";
 import { appointments } from "./data";
 
@@ -16,6 +23,34 @@ import { appointments } from "./data";
 
 
 const theme = createMuiTheme({ palette: { type: "light", primary: blue } });
+
+const style = ({ palette }) => ({
+  icon: {
+    color: palette.action.active,
+  },
+  textCenter: {
+    textAlign: 'center',
+  },
+  header: {
+    height: '260px',
+    backgroundSize: 'cover',
+  },
+  commandButton: {
+    backgroundColor: 'rgba(255,255,255,0.65)',
+  },
+});
+
+function get_today_date()
+{
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+
+    today = yyyy + '-' + mm + '-' + dd;
+
+    return today
+}
 
 export default class Planning extends React.PureComponent
 {
@@ -25,24 +60,17 @@ export default class Planning extends React.PureComponent
 
 
         this.state = {
-          data: [],
+          data: appointments,
           ids: 0,
+          currentDate: get_today_date(),
           test: false
         };
 
 
         this.callback = this.callback.bind(this)
         this.fetch_planning = this.fetch_planning.bind(this)
+        this.currentDateChange = this.currentDateChange.bind(this)
 
-
-        console.log("lavba ", this.state)
-
-        console.log("hello constructeur ", this.state.data)
-
-
-        this.state.data.push({title:"CACA", startDate: new Date(2020, 1, 25, 10, 0), endDate: new Date(2020, 1, 25, 11, 0)})
-
-        console.log("je passe ici 1")
     }
 
     async fetch_planning(nurse, date, success_callback, set_error)
@@ -70,6 +98,11 @@ export default class Planning extends React.PureComponent
 
     }
 
+    currentDateChange(currentDate)
+    {
+          this.setState({currentDate});
+          // TO DO : Fetch function to new week
+    };
 
     callback(treatments_array)
     {
@@ -103,7 +136,6 @@ export default class Planning extends React.PureComponent
 
             };
 
-            console.log("je passe ici 2")
 
             data = this.state.data
 
@@ -115,17 +147,42 @@ export default class Planning extends React.PureComponent
     componentDidMount()
     {
         const lol = this.fetch_planning({id: 1, token: this.props.token}, "", this.callback, console.log, this)
-        console.log("ici 4")
 
     }
 
     render()
     {
 
-        const data = this.state.data;
+        const {data, currentDate} = this.state;
 
-        console.log("hello ", data)
-            console.log("je passe ici 3")
+        const Content = withStyles(style, {name: 'Content'})(({
+          children, appointmentData, classes, ...restProps
+        }) => (
+          <AppointmentTooltip.Content {...restProps} appointmentData={appointmentData}>
+            <Grid container alignItems="center">
+              <Grid item xs={2} className={classes.textCenter}>
+                <Room className={classes.icon} />
+              </Grid>
+              <Grid item xs={4}>
+                <span>{appointmentData.location}</span>
+              </Grid>
+            </Grid>
+            <Grid container alignItems="center">
+              <Grid item xs={2} className={classes.textCenter}>
+                <LocalHospital className={classes.icon} />
+              </Grid>
+              <Grid item xs={4}>
+                <span>{appointmentData.treatment}</span>
+              </Grid> 
+            </Grid>
+          </AppointmentTooltip.Content>
+        ));
+
+        const CommandButton = withStyles(style, { name: 'CommandButton' })(({
+          classes, ...restProps
+        }) => (
+          <AppointmentTooltip.CommandButton {...restProps} className={classes.commandButton} />
+        ));
 
 
         return (!this.state.test ? <div></div> :
@@ -133,10 +190,19 @@ export default class Planning extends React.PureComponent
           <MuiThemeProvider theme={theme}>
             <Paper>
               <Scheduler data={data}>
-                <ViewState currentDate="2020-02-23" />
+                <ViewState
+                    currentDate={currentDate}
+                    onCurrentDateChange={this.currentDateChange}
+                />
                 <WeekView startDayHour={9} endDayHour={19} />
+                <ToolbarScheduler/>
+                <DateNavigator />
+                <TodayButton />
                 <Appointments />
-                <AppointmentTooltip />
+                <AppointmentTooltip 
+                  contentComponent={Content}
+                  commandButtonComponent={CommandButton}
+                  showCloseButton/>
               </Scheduler>
             </Paper>
           </MuiThemeProvider>
