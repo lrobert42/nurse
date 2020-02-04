@@ -18,6 +18,7 @@ import Room from '@material-ui/icons/Room';
 
 import { blue } from "@material-ui/core/colors";
 import { appointments } from "./data";
+import Cookies from 'universal-cookie';
 
 // import { fetch_planning } from "../api_communication/planning_api.js"
 
@@ -78,6 +79,8 @@ export default class Planning extends React.PureComponent
         const nurse_id = nurse.id;
         const token = nurse.token;
 
+        const cookies = new Cookies();
+        const cookie_token = cookies.get('token')
 
         const response = await fetch('/treatments/', {
                                 method: 'GET',

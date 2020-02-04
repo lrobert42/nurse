@@ -4,6 +4,10 @@ import './index.css';
 import * as serviceWorker from './serviceWorker';
 import Login from './containers/Login.js'
 import MainScreen from './containers/MainScreen.js'
+import Cookies from 'universal-cookie';
+
+
+
 
 function RenderLogin(props)
 {
@@ -40,9 +44,12 @@ class App extends React.Component
 
     handleLogin(response, credentials)
     {
+        const cookies = new Cookies();
+        cookies.set('token', {username: credentials.username, access_token: response.access_token}, { path: '/' });
+
         this.setState({
                         is_logged_in : true,
-                        username     : credentials.username, 
+                        username     : credentials.username,
                         status       : response.usertype,
                         access_token : response.access_token,
                         // TODO
